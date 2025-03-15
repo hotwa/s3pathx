@@ -57,15 +57,24 @@ class S3Path:
         print(f"✅ Uploaded to S3: {local_path} → s3://{self.bucket_name}/{s3_key}")
 
     def mv_from_s3(self, s3_filename: str, local_path: str | Path = None):
+        if s3_filename.startswith(self.prefix):
+            s3_filename = s3_filename[len(self.prefix):]
+
         s3_key = str(Path(self.prefix) / s3_filename)
-        if not local_path:
+
+        if local_path is None:
             local_path = self.local_cache_dir / s3_filename
         else:
             local_path = Path(local_path)
+            if local_path.is_dir() or str(local_path).endswith('/'):
+                local_path = local_path / Path(s3_filename).name
+
         local_path.parent.mkdir(parents=True, exist_ok=True)
+
         self.client.download_file(self.bucket_name, s3_key, str(local_path))
         print(f"✅ Downloaded from S3: s3://{self.bucket_name}/{s3_key} → {local_path}")
         return local_path
+
 
     def read_text(self, s3_filename: str, encoding='utf-8') -> str:
         s3_key = str(Path(self.prefix) / s3_filename)
