@@ -1,3 +1,4 @@
 dist/
 s3pathx.egg-info
 tests/
+*.pyc
