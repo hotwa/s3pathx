@@ -47,6 +47,12 @@ with S3Path(
 
     # Delete all `.txt` files in the S3 prefix
     s3.unlink_all([".txt"])
+
+    # file list
+    s3.ls()
+
+    # s3 to local
+    s3.mv_from_s3("bug5-11.md", "./bug5-11.md")
 ```
 
 ## 🗂 Methods Overview
